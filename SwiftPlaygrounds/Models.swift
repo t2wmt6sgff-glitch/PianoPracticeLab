@@ -13,7 +13,7 @@ enum Weekday: Int, Codable, CaseIterable, Identifiable {
     case thursday = 5
     case friday = 6
     case saturday = 7
-
+    
     var id: Int { rawValue }
 }
 
@@ -28,7 +28,7 @@ final class StudySchedule {
     var reminderMinute: Int
     var minimumDurationMinutes: Int
     var remindersEnabled: Bool
-
+    
     init(
         id: UUID = UUID(),
         studyDays: [Weekday] = [.monday, .tuesday, .wednesday, .thursday, .friday],
@@ -58,7 +58,7 @@ final class PracticeSession {
     /// Mínimo vigente en el momento de registrar la sesión.
     /// Nunca debe modificarse después de la creación.
     var minimumDurationMinutesAtRecording: Int
-
+    
     init(
         id: UUID = UUID(),
         date: Date = Date(),
@@ -82,7 +82,7 @@ final class DayJustification {
     var id: UUID
     var date: Date
     var note: String?
-
+    
     init(
         id: UUID = UUID(),
         date: Date,
