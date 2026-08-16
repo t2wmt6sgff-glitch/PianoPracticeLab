@@ -11,7 +11,7 @@ struct ContentView: View {
                     Label("Hoy", systemImage: "calendar.today")
                 }
             
-            Text("Vista de Calendario (Próximamente)")
+            CalendarView(container: container)
                 .tabItem {
                     Label("Calendario", systemImage: "calendar")
                 }
