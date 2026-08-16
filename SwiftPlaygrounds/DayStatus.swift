@@ -9,33 +9,59 @@ enum DayStatus: String {
     case justified = "Justificado"
 }
 
-func calcularEstadoHoy(
+// MARK: - Función generalizada para cualquier fecha
+
+/// Calcula el estado de un día específico basándose en el horario, sesiones y justificaciones.
+func calcularEstado(
+    for date: Date,
     schedule: StudySchedule?,
-    sesionesHoy: [PracticeSession],
-    justificacionHoy: DayJustification?
+    sesionesDelDia: [PracticeSession],
+    justificacionDelDia: DayJustification?
 ) -> DayStatus {
     guard let schedule = schedule else { return .pending }
     
-    let weekday = Calendar.current.component(.weekday, from: Date())
+    let calendar = Calendar.current
+    let weekday = calendar.component(.weekday, from: date)
     let esDiaDeEstudio = schedule.studyDays.contains { $0.rawValue == weekday }
     
     if !esDiaDeEstudio {
         return .plannedRest
     }
     
-    let minutosTotales = sesionesHoy.reduce(0) { $0 + $1.durationMinutes }
-    // Si hay sesiones hoy, usamos el mínimo histórico de la más reciente. Si no, el del horario.
-    let minimoRequerido = sesionesHoy.last?.minimumDurationMinutesAtRecording ?? schedule.minimumDurationMinutes
+    let minutosTotales = sesionesDelDia.reduce(0) { $0 + $1.durationMinutes }
+    let minimoRequerido = sesionesDelDia.last?.minimumDurationMinutesAtRecording 
+    ?? schedule.minimumDurationMinutes
     
     if minutosTotales >= minimoRequerido {
         return .practiced
     }
     
-    if justificacionHoy != nil {
+    if justificacionDelDia != nil {
         return .justified
     }
     
-    return .pending
+    let hoy = calendar.startOfDay(for: Date())
+    let diaEvaluado = calendar.startOfDay(for: date)
+    
+    if diaEvaluado < hoy {
+        return .notPracticed
+    } else {
+        return .pending
+    }
 }
 
+// MARK: - Función legacy para compatibilidad
+
+func calcularEstadoHoy(
+    schedule: StudySchedule?,
+    sesionesHoy: [PracticeSession],
+    justificacionHoy: DayJustification?
+) -> DayStatus {
+    return calcularEstado(
+        for: Date(),
+        schedule: schedule,
+        sesionesDelDia: sesionesHoy,
+        justificacionDelDia: justificacionHoy
+    )
+}
 
